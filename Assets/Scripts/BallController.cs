@@ -4,13 +4,16 @@ using UnityEngine;
 
 public class BallController : MonoBehaviour
 {
+    public GameController gameController;
     public static string Tag = "Ball";
-    public int InitialSpeed = 5;
+    public float InitialSpeed = 10;
+    private float speed;
     private Rigidbody2D rb2d;
 
     // Start is called before the first frame update
     void Start()
     {
+        speed = gameController.BallSpeedMutator * InitialSpeed;
         rb2d = GetComponent<Rigidbody2D>();
         Invoke("Serve", 2);
     }
@@ -18,28 +21,21 @@ public class BallController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        rb2d.rotation += 0.1f;
     }
 
     void Serve()
     {
-        float rand = Random.Range(0, 2);
-        if (rand < 1)
-        {
-            var directionVector = new Vector2(4, -3);
-            directionVector.Scale(new Vector2(InitialSpeed, InitialSpeed));
-            rb2d.AddForce(directionVector);
-        }
-        else 
-        {
-            var directionVector = new Vector2(4, -3);
-            directionVector.Scale(new Vector2(InitialSpeed, InitialSpeed));
-            rb2d.AddForce(directionVector);
-        }
+        var dirX = GameController.LastSideToScore == GameController.Side.Left ? 1 : -1;
+        var dirY = Random.Range(0, 2) < 1 ? 1 : -1;
+        var directionVector = new Vector2(dirX * 4, dirY * 3);
+        directionVector.Scale(new Vector2(speed, speed));
+        rb2d.AddForce(directionVector);
     }
 
     void Reset()
     {
+        speed = gameController.BallSpeedMutator * InitialSpeed;
         // Add parameter side "l" , "r" 
         rb2d.velocity = Vector2.zero;
         transform.position = Vector2.zero;
@@ -47,8 +43,8 @@ public class BallController : MonoBehaviour
 
     void ResetAndServe()
     {
-        Invoke("Reset", 0.1f);
-        Invoke("Serve", 1);
+        Invoke("Reset", 0.01f);
+        Invoke("Serve", 1.5f);
     }
 
     void OnCollisionEnter2D(Collision2D collision)

@@ -5,6 +5,7 @@ using UnityEngine;
 public class MenuController : MonoBehaviour
 {
     public GameObject[] panels;
+    GameObject ball;
 
     public void SetActivePanel(int index)
     {
@@ -21,10 +22,17 @@ public class MenuController : MonoBehaviour
         SetActivePanel(0);
     }
     
+    public void OnRestartButton()
+    {
+        GameController.PlayerLeftScore = 0;
+        GameController.PlayerRightScore = 0;
+        ball.SendMessage("ResetAndServe", 0.5f, SendMessageOptions.RequireReceiver);
+    }
+
     // Start is called before the first frame update
     void Start()
     {
-        
+        ball = GameObject.FindGameObjectWithTag(BallController.Tag);
     }
 
     // Update is called once per frame
